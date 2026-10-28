@@ -1,0 +1,2 @@
+/* Teemojen värinäytteet asetuksiin (tuotettu make_themes.py:llä) */
+const THEME_SWATCH = {"light": ["#f6efe0", "#fcf8ef", "#e3b448", "#8e2a35", "#17140f"], "dark": ["#100e0b", "#1c1914", "#e3b448", "#d0707a", "#f3ead6"], "salvia": ["#23241a", "#323328", "#a9b58c", "#e6b7a3", "#f4ece2"], "retro": ["#1b2631", "#283745", "#d6976d", "#edd7a3", "#f5efd3"], "persikka": ["#281d1a", "#382a26", "#f6c3a8", "#eab7a5", "#fff1e8"], "vuoristo": ["#1b2120", "#2a3540", "#6c93bd", "#d4b3b3", "#eeeeec"], "metsa": ["#151d18", "#22322a", "#8fa97a", "#e6e3df", "#ecebe7"]};

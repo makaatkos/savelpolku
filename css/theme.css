@@ -1,0 +1,551 @@
+/* Sävelpolku – teemat. Roolit: pohja (bg), pinnat (card), teksti (ink), pääpainike (sun), korostus (accent),
+   palkit (accent2), tilavärit (good/bad/p-none/p-part) ja kvinttiympyrän koskettimet (key-*). Tiedosto on tuotettu skriptillä. */
+:root {
+  --bg: #f6efe0;
+  --bg2: #efe6d2;
+  --card: #fcf8ef;
+  --card2: #f4ecdc;
+  --ink: #17140f;
+  --muted: #6e6556;
+  --line: #e0d4bb;
+  --paper: #fcf8ef;
+  --accent: #8e2a35;
+  --on-accent: #fff6e6;
+  --accent2: #a8823a;
+  --sun: #e3b448;
+  --on-sun: #17140f;
+  --good: #3f7d58;
+  --bad: #b23a2f;
+  --mark: #f1d58c;
+  --staffline: #9a8f78;
+  --glow1: rgba(227, 180, 72, 0.24);
+  --glow2: rgba(142, 42, 53, 0.1);
+  --shadow: 0 2px 0 rgba(0, 0, 0, .05), 0 12px 30px -14px rgba(60, 45, 20, .28);
+  --glass: rgba(252, 248, 239, 0.66);
+  --glass-2: rgba(239, 230, 210, 0.5);
+  --glass-brd: rgba(255, 255, 255, .85);
+  --glass-hi: rgba(255, 255, 255, .95);
+  --glass-sh: 0 10px 30px -14px rgba(60, 45, 20, .26);
+  --glass-solid: rgba(252, 248, 239, 0.84);
+  --glass-solid-2: rgba(244, 236, 220, 0.76);
+  --blob1: rgba(227, 180, 72, 0.26);
+  --blob2: rgba(142, 42, 53, 0.16);
+  --blob3: rgba(79, 143, 106, 0.12);
+  --p-none: #c0473b;
+  --p-part: #d98a2b;
+  --key-ivory: #fcf8ef;
+  --key-ivory-2: #f1e7d3;
+  --key-black: #1c1914;
+  --key-black-2: #26221b;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #100e0b;
+    --bg2: #17140f;
+    --card: #1c1914;
+    --card2: #242019;
+    --ink: #f3ead6;
+    --muted: #a99f8b;
+    --line: #3a342a;
+    --paper: #1c1914;
+    --accent: #d0707a;
+    --on-accent: #17140f;
+    --accent2: #d4b06a;
+    --sun: #e3b448;
+    --on-sun: #17140f;
+    --good: #6fbf8f;
+    --bad: #e0705f;
+    --mark: #e3b448;
+    --staffline: #8d8370;
+    --glow1: rgba(227, 180, 72, 0.14);
+    --glow2: rgba(160, 50, 60, 0.12);
+    --shadow: 0 2px 0 rgba(0, 0, 0, .3), 0 14px 40px -14px rgba(0, 0, 0, .75);
+    --glass: rgba(28, 25, 20, 0.62);
+    --glass-2: rgba(23, 20, 15, 0.5);
+    --glass-brd: rgba(243, 234, 214, 0.12);
+    --glass-hi: rgba(243, 234, 214, 0.14);
+    --glass-sh: 0 14px 40px -14px rgba(0, 0, 0, .75);
+    --glass-solid: rgba(28, 25, 20, 0.88);
+    --glass-solid-2: rgba(36, 32, 25, 0.82);
+    --blob1: rgba(227, 180, 72, 0.14);
+    --blob2: rgba(160, 50, 60, 0.14);
+    --blob3: rgba(79, 143, 106, 0.1);
+    --p-none: #d65a4c;
+    --p-part: #e09a3c;
+    --key-ivory: #fcf8ef;
+    --key-ivory-2: #efe5d0;
+    --key-black: #1c1914;
+    --key-black-2: #2a251d;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #f6efe0;
+  --bg2: #efe6d2;
+  --card: #fcf8ef;
+  --card2: #f4ecdc;
+  --ink: #17140f;
+  --muted: #6e6556;
+  --line: #e0d4bb;
+  --paper: #fcf8ef;
+  --accent: #8e2a35;
+  --on-accent: #fff6e6;
+  --accent2: #a8823a;
+  --sun: #e3b448;
+  --on-sun: #17140f;
+  --good: #3f7d58;
+  --bad: #b23a2f;
+  --mark: #f1d58c;
+  --staffline: #9a8f78;
+  --glow1: rgba(227, 180, 72, 0.24);
+  --glow2: rgba(142, 42, 53, 0.1);
+  --shadow: 0 2px 0 rgba(0, 0, 0, .05), 0 12px 30px -14px rgba(60, 45, 20, .28);
+  --glass: rgba(252, 248, 239, 0.66);
+  --glass-2: rgba(239, 230, 210, 0.5);
+  --glass-brd: rgba(255, 255, 255, .85);
+  --glass-hi: rgba(255, 255, 255, .95);
+  --glass-sh: 0 10px 30px -14px rgba(60, 45, 20, .26);
+  --glass-solid: rgba(252, 248, 239, 0.84);
+  --glass-solid-2: rgba(244, 236, 220, 0.76);
+  --blob1: rgba(227, 180, 72, 0.26);
+  --blob2: rgba(142, 42, 53, 0.16);
+  --blob3: rgba(79, 143, 106, 0.12);
+  --p-none: #c0473b;
+  --p-part: #d98a2b;
+  --key-ivory: #fcf8ef;
+  --key-ivory-2: #f1e7d3;
+  --key-black: #1c1914;
+  --key-black-2: #26221b;
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --bg: #100e0b;
+  --bg2: #17140f;
+  --card: #1c1914;
+  --card2: #242019;
+  --ink: #f3ead6;
+  --muted: #a99f8b;
+  --line: #3a342a;
+  --paper: #1c1914;
+  --accent: #d0707a;
+  --on-accent: #17140f;
+  --accent2: #d4b06a;
+  --sun: #e3b448;
+  --on-sun: #17140f;
+  --good: #6fbf8f;
+  --bad: #e0705f;
+  --mark: #e3b448;
+  --staffline: #8d8370;
+  --glow1: rgba(227, 180, 72, 0.14);
+  --glow2: rgba(160, 50, 60, 0.12);
+  --shadow: 0 2px 0 rgba(0, 0, 0, .3), 0 14px 40px -14px rgba(0, 0, 0, .75);
+  --glass: rgba(28, 25, 20, 0.62);
+  --glass-2: rgba(23, 20, 15, 0.5);
+  --glass-brd: rgba(243, 234, 214, 0.12);
+  --glass-hi: rgba(243, 234, 214, 0.14);
+  --glass-sh: 0 14px 40px -14px rgba(0, 0, 0, .75);
+  --glass-solid: rgba(28, 25, 20, 0.88);
+  --glass-solid-2: rgba(36, 32, 25, 0.82);
+  --blob1: rgba(227, 180, 72, 0.14);
+  --blob2: rgba(160, 50, 60, 0.14);
+  --blob3: rgba(79, 143, 106, 0.1);
+  --p-none: #d65a4c;
+  --p-part: #e09a3c;
+  --key-ivory: #fcf8ef;
+  --key-ivory-2: #efe5d0;
+  --key-black: #1c1914;
+  --key-black-2: #2a251d;
+  color-scheme: dark;
+}
+:root[data-theme="salvia"] {
+  --bg: #23241a;
+  --bg2: #2a2b20;
+  --card: #323328;
+  --card2: #3a3c2f;
+  --ink: #f4ece2;
+  --muted: #bdb6a6;
+  --line: #4a4b3c;
+  --paper: #323328;
+  --accent: #e6b7a3;
+  --on-accent: #23241a;
+  --accent2: #c98f76;
+  --sun: #a9b58c;
+  --on-sun: #1f2015;
+  --good: #a8c98a;
+  --bad: #ec937f;
+  --mark: #e3c6b6;
+  --staffline: #8f8a76;
+  --glow1: rgba(98, 110, 76, 0.14);
+  --glow2: rgba(147, 96, 76, 0.12);
+  --shadow: 0 2px 0 rgba(0, 0, 0, .3), 0 14px 40px -14px rgba(0, 0, 0, .75);
+  --glass: rgba(50, 51, 40, 0.62);
+  --glass-2: rgba(42, 43, 32, 0.5);
+  --glass-brd: rgba(244, 236, 226, 0.12);
+  --glass-hi: rgba(244, 236, 226, 0.14);
+  --glass-sh: 0 14px 40px -14px rgba(0, 0, 0, .75);
+  --glass-solid: rgba(50, 51, 40, 0.88);
+  --glass-solid-2: rgba(58, 60, 47, 0.82);
+  --blob1: rgba(98, 110, 76, 0.14);
+  --blob2: rgba(147, 96, 76, 0.14);
+  --blob3: rgba(134, 141, 116, 0.1);
+  --p-none: #d9735f;
+  --p-part: #d9a85a;
+  --key-ivory: #f7efe8;
+  --key-ivory-2: #e3d7ca;
+  --key-black: #23241a;
+  --key-black-2: #3a3627;
+  color-scheme: dark;
+}
+:root[data-theme="retro"] {
+  --bg: #1b2631;
+  --bg2: #212e3a;
+  --card: #283745;
+  --card2: #304152;
+  --ink: #f5efd3;
+  --muted: #b9b4a0;
+  --line: #3d5063;
+  --paper: #283745;
+  --accent: #edd7a3;
+  --on-accent: #1b2631;
+  --accent2: #c98a62;
+  --sun: #d6976d;
+  --on-sun: #1d1309;
+  --good: #9cc98a;
+  --bad: #ef937c;
+  --mark: #edd7a3;
+  --staffline: #8796a3;
+  --glow1: rgba(71, 91, 110, 0.14);
+  --glow2: rgba(201, 138, 98, 0.12);
+  --shadow: 0 2px 0 rgba(0, 0, 0, .3), 0 14px 40px -14px rgba(0, 0, 0, .75);
+  --glass: rgba(40, 55, 69, 0.62);
+  --glass-2: rgba(33, 46, 58, 0.5);
+  --glass-brd: rgba(245, 239, 211, 0.12);
+  --glass-hi: rgba(245, 239, 211, 0.14);
+  --glass-sh: 0 14px 40px -14px rgba(0, 0, 0, .75);
+  --glass-solid: rgba(40, 55, 69, 0.88);
+  --glass-solid-2: rgba(48, 65, 82, 0.82);
+  --blob1: rgba(71, 91, 110, 0.14);
+  --blob2: rgba(201, 138, 98, 0.14);
+  --blob3: rgba(237, 215, 163, 0.1);
+  --p-none: #d9735f;
+  --p-part: #e3a65c;
+  --key-ivory: #fbf7e6;
+  --key-ivory-2: #ece2c2;
+  --key-black: #1b2631;
+  --key-black-2: #475b6e;
+  color-scheme: dark;
+}
+:root[data-theme="persikka"] {
+  --bg: #281d1a;
+  --bg2: #2f231f;
+  --card: #382a26;
+  --card2: #42322d;
+  --ink: #fff1e8;
+  --muted: #c9ada3;
+  --line: #56423c;
+  --paper: #382a26;
+  --accent: #eab7a5;
+  --on-accent: #281d1a;
+  --accent2: #cfa08e;
+  --sun: #f6c3a8;
+  --on-sun: #3d2a25;
+  --good: #9fc98c;
+  --bad: #f09787;
+  --mark: #f6c3a8;
+  --staffline: #a88b80;
+  --glow1: rgba(246, 195, 168, 0.14);
+  --glow2: rgba(140, 86, 70, 0.12);
+  --shadow: 0 2px 0 rgba(0, 0, 0, .3), 0 14px 40px -14px rgba(0, 0, 0, .75);
+  --glass: rgba(56, 42, 38, 0.62);
+  --glass-2: rgba(47, 35, 31, 0.5);
+  --glass-brd: rgba(255, 241, 232, 0.12);
+  --glass-hi: rgba(255, 241, 232, 0.14);
+  --glass-sh: 0 14px 40px -14px rgba(0, 0, 0, .75);
+  --glass-solid: rgba(56, 42, 38, 0.88);
+  --glass-solid-2: rgba(66, 50, 45, 0.82);
+  --blob1: rgba(246, 195, 168, 0.14);
+  --blob2: rgba(140, 86, 70, 0.14);
+  --blob3: rgba(207, 160, 142, 0.1);
+  --p-none: #dc7a68;
+  --p-part: #e8a86a;
+  --key-ivory: #fffbf8;
+  --key-ivory-2: #fde1cf;
+  --key-black: #281d1a;
+  --key-black-2: #4a3631;
+  color-scheme: dark;
+}
+:root[data-theme="vuoristo"] {
+  --bg: #1b2120;
+  --bg2: #212826;
+  --card: #2a3540;
+  --card2: #31404d;
+  --ink: #eeeeec;
+  --muted: #a9b4bf;
+  --line: #3d4b57;
+  --paper: #2a3540;
+  --accent: #d4b3b3;
+  --on-accent: #1b2120;
+  --accent2: #6c93bd;
+  --sun: #6c93bd;
+  --on-sun: #0f1720;
+  --good: #7fbf96;
+  --bad: #ef9a90;
+  --mark: #d4b3b3;
+  --staffline: #8796a3;
+  --glow1: rgba(108, 147, 189, 0.14);
+  --glow2: rgba(212, 179, 179, 0.12);
+  --shadow: 0 2px 0 rgba(0, 0, 0, .3), 0 14px 40px -14px rgba(0, 0, 0, .75);
+  --glass: rgba(42, 53, 64, 0.62);
+  --glass-2: rgba(33, 40, 38, 0.5);
+  --glass-brd: rgba(238, 238, 236, 0.12);
+  --glass-hi: rgba(238, 238, 236, 0.14);
+  --glass-sh: 0 14px 40px -14px rgba(0, 0, 0, .75);
+  --glass-solid: rgba(42, 53, 64, 0.88);
+  --glass-solid-2: rgba(49, 64, 77, 0.82);
+  --blob1: rgba(108, 147, 189, 0.14);
+  --blob2: rgba(212, 179, 179, 0.14);
+  --blob3: rgba(52, 73, 90, 0.1);
+  --p-none: #e07a6f;
+  --p-part: #e3a65c;
+  --key-ivory: #eeeeec;
+  --key-ivory-2: #d9dde0;
+  --key-black: #262b28;
+  --key-black-2: #34495a;
+  color-scheme: dark;
+}
+:root[data-theme="metsa"] {
+  --bg: #151d18;
+  --bg2: #1b2620;
+  --card: #22322a;
+  --card2: #2a3d32;
+  --ink: #ecebe7;
+  --muted: #b9b8b2;
+  --line: #3a4d40;
+  --paper: #22322a;
+  --accent: #e6e3df;
+  --on-accent: #1b2a20;
+  --accent2: #6f8a5d;
+  --sun: #8fa97a;
+  --on-sun: #142016;
+  --good: #9cc98a;
+  --bad: #e08a6f;
+  --mark: #8fa97a;
+  --staffline: #8e9a8c;
+  --glow1: rgba(111, 138, 93, 0.14);
+  --glow2: rgba(185, 184, 178, 0.12);
+  --shadow: 0 2px 0 rgba(0, 0, 0, .3), 0 14px 40px -14px rgba(0, 0, 0, .75);
+  --glass: rgba(34, 50, 42, 0.62);
+  --glass-2: rgba(27, 38, 32, 0.5);
+  --glass-brd: rgba(236, 235, 231, 0.12);
+  --glass-hi: rgba(236, 235, 231, 0.14);
+  --glass-sh: 0 14px 40px -14px rgba(0, 0, 0, .75);
+  --glass-solid: rgba(34, 50, 42, 0.88);
+  --glass-solid-2: rgba(42, 61, 50, 0.82);
+  --blob1: rgba(111, 138, 93, 0.14);
+  --blob2: rgba(185, 184, 178, 0.14);
+  --blob3: rgba(65, 99, 60, 0.1);
+  --p-none: #d9735f;
+  --p-part: #d9a85a;
+  --key-ivory: #e6e3df;
+  --key-ivory-2: #cfcdc6;
+  --key-black: #1b2a20;
+  --key-black-2: #2e4a3a;
+  color-scheme: dark;
+}
+body { background-color: var(--bg); color: var(--ink); }
+
+/* Pianon koskettimet: yläpalkin alareunassa ohut koskettimistoraita */
+.brand b { color: var(--accent); }
+
+/* Pääpainikkeet: messinkinen kulta ja musta teksti */
+.btn.primary { background: linear-gradient(180deg, rgba(255, 255, 255, .2), rgba(255, 255, 255, 0) 60%), var(--sun); color: var(--on-sun); border-color: color-mix(in srgb, var(--ink) 80%, var(--sun)); }
+.btn.danger { background: var(--bad); color: #fff; }
+.qlabel { background: var(--accent); color: var(--on-accent); }
+
+/* Kvinttiympyrä: norsunluu ulkokehä, musta sisäkehä, valittuna messinki ja viininpunainen */
+.cf-out { fill: var(--key-ivory); stroke: #cbbd9f; stroke-width: 1; }
+.cf-out.alt { fill: var(--key-ivory-2); }
+.cf-out.on { fill: var(--sun); }
+.cf-in { fill: var(--key-black); stroke: #000; stroke-width: 1; }
+.cf-in.alt { fill: var(--key-black-2); }
+.cf-in.on { fill: var(--accent); }
+.cf-M { fill: #17140f; }
+.cf-out.on + .cf-in + text, .cf-seg.on .cf-M { fill: var(--on-sun); }
+.cf-m { fill: #f3ead6; }
+.cf-seg.on path { stroke: #17140f; stroke-width: 2; }
+
+/* Askelrivi ja intervallikaavio flyygelin väreissä */
+.stp.whole { background: var(--key-ivory); color: #17140f; }
+.stp.half { background: var(--sun); color: var(--on-sun); }
+.stp.aug { background: var(--accent); color: var(--on-accent); }
+.iv { color: #17140f; }
+
+/* Edistymispalkki ja ympyrä */
+.ring-fg { stroke: var(--accent2); }
+.bar i { background: linear-gradient(90deg, var(--accent2), var(--sun)); }
+
+/* Kortin kuvakelaatta */
+.mi.ico { background: #fbf3df; border-color: rgba(23, 20, 15, .16); }
+.mi { background: var(--ink); color: var(--bg); }
+
+/* Asetusten nappipari */
+.btnpair { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ---- Opas: siirtymät vain läpinäkyvyydellä, sijainti transformilla ---- */
+.tour-spot, .tour-card { left: 0 !important; top: 0 !important; transition: opacity .2s ease !important; will-change: opacity, transform; }
+.tour-spot.hide, .tour-card.hide { opacity: 0; }
+.tour-spot { box-shadow: 0 0 0 200vmax rgba(12, 10, 8, .64), 0 0 0 3px var(--sun), 0 0 22px 4px rgba(227, 180, 72, .45); }
+.tour-spot.center { box-shadow: 0 0 0 200vmax rgba(12, 10, 8, .64); }
+html.touring, html.touring body { overflow: hidden; }
+
+/* ---- Esittely ---- */
+.intro { position: fixed; inset: 0; z-index: 95; display: grid; place-items: center; padding: 16px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: rgba(12, 10, 8, .55); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  opacity: 0; transition: opacity .25s ease; }
+.intro.show { opacity: 1; }
+.intro-card { width: min(520px, 100%); padding: 26px 24px 20px; border-radius: 26px; text-align: center;
+  background: linear-gradient(170deg, var(--glass-hi) -30%, var(--glass-solid) 40%, var(--glass-solid-2));
+  border: 1px solid var(--glass-brd); box-shadow: inset 0 1px 0 var(--glass-hi), 0 30px 70px -20px rgba(0, 0, 0, .6);
+  transform: translate3d(0, 12px, 0) scale(.98); transition: transform .35s cubic-bezier(.2, .9, .3, 1), opacity .17s ease; }
+.intro.show .intro-card { transform: none; }
+.intro-card.out { opacity: 0; }
+.intro-mascot { display: flex; justify-content: center; margin-bottom: 6px; }
+.intro-mascot .mascot { width: 150px; height: 150px; }
+.intro-body h2 { font-size: clamp(24px, 6vw, 32px); margin: 0 0 8px; text-wrap: balance; }
+.intro-body p { font-size: 18px; line-height: 1.55; margin: 0 auto; max-width: 40ch; color: var(--ink); }
+.intro-body .w { display: inline-block; animation: wordIn .35s cubic-bezier(.2, .8, .2, 1) both; animation-delay: var(--d); }
+@keyframes wordIn { from { opacity: 0; transform: translate3d(0, 6px, 0); } }
+.intro-foot { display: flex; align-items: center; gap: 8px; margin-top: 20px; flex-wrap: wrap; justify-content: center; }
+.intro-foot .tour-dots { flex-basis: 100%; justify-content: center; margin: 0 0 6px; }
+.intro-foot .btn.primary { min-width: 150px; }
+html.reduce-motion .intro, html.reduce-motion .intro-card { transition: none; }
+html.reduce-motion .intro-body .w { animation: none; }
+@media (max-width: 480px) {
+  .intro-card { padding: 20px 16px 16px; }
+  .intro-mascot .mascot { width: 120px; height: 120px; }
+  .intro-foot .btn { flex: 1; }
+  .intro-foot .btn.primary { flex-basis: 100%; }
+}
+
+/* Teemavalitsin */
+.themes { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; width: 100%; }
+.themebtn { display: flex; flex-direction: column; gap: 8px; align-items: stretch; text-align: left; padding: 10px; border-radius: 14px; cursor: pointer;
+  border: 2px solid var(--line); background: var(--card); color: var(--ink); font: inherit; transition: border-color .2s, transform .2s; }
+.themebtn:hover { transform: translateY(-2px); }
+.themebtn.on { border-color: var(--ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--sun) 60%, transparent); }
+.themebtn .tprev { display: flex; height: 38px; border-radius: 9px; overflow: hidden; border: 1px solid rgba(0, 0, 0, .12); }
+.themebtn .tprev i { flex: 1; }
+.themebtn .tprev i:first-child { flex: 2; }
+.themebtn b { font-size: 15px; }
+.themebtn small { color: var(--muted); font-size: 12.5px; }
+.setrow.col > .themes { margin-top: 8px; }
+
+/* Käynnistys ja varanäkymä */
+.boot { min-height: 50vh; display: grid; place-items: center; color: var(--muted); font-weight: 700; }
+.bootfail { max-width: 440px; margin: 12vh auto 0; text-align: center; display: grid; gap: 10px; justify-items: center; }
+.bootfail h1 { font-size: 26px; }
+
+/* Alatunniste ja tietosuojasivu */
+.appfoot { margin: 34px 0 8px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13.5px; text-align: center; display: grid; gap: 4px; }
+.appfoot p { margin: 0; max-width: 60ch; margin-inline: auto; }
+.appfoot a, .prose a, .setrow small a, .lb-text a { color: var(--accent); font-weight: 700; }
+.prose { max-width: 68ch; }
+.prose h2 { margin: 22px 0 6px; font-size: 20px; }
+.prose p, .prose li { color: var(--ink); }
+.prose ul { padding-left: 20px; }
+
+/* ---- Etusivun kortit ---- */
+.stats-row { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.stat2 { display: flex; flex-direction: column; justify-content: space-between; gap: 12px; padding: 14px 16px 16px; border-radius: var(--r); border: 1px solid var(--line);
+  background: linear-gradient(160deg, var(--card), var(--card2)); box-shadow: var(--shadow); min-width: 0; }
+.st-head { display: flex; align-items: center; gap: 12px; }
+.sart { width: 62px; height: 62px; flex: none; padding: 5px; box-sizing: border-box; overflow: visible; background: #fff6dc; border: 1.5px solid rgba(23, 20, 15, .18); border-radius: 16px; }
+.st-txt { display: flex; flex-direction: column; min-width: 0; }
+.st-txt b { font-size: 15px; color: var(--muted); font-weight: 700; }
+.st-num { font: 800 30px/1.05 'Bricolage Grotesque', 'Segoe UI', sans-serif; color: var(--ink); display: flex; align-items: baseline; gap: 6px; }
+.st-num small { font: 700 15px 'Atkinson Hyperlegible', 'Segoe UI', sans-serif; color: var(--muted); }
+.hbar { position: relative; display: flex; height: 14px; border-radius: 99px; background: color-mix(in srgb, var(--ink) 10%, transparent); overflow: hidden; box-shadow: inset 0 1px 2px rgba(0, 0, 0, .12); }
+.hbar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #e6bb4f, #ffb627 60%, #ff8a1f); transform-origin: left; animation: growbar .9s cubic-bezier(.2, .8, .2, 1) both; }
+.stat2.full .hbar i { background: linear-gradient(90deg, color-mix(in srgb, var(--good) 75%, #fff), var(--good)); }
+.hbar.lessons i { background: linear-gradient(90deg, color-mix(in srgb, var(--good) 70%, #fff), var(--good)); }
+/* maalitaulu: nuoli heiluu, kun tavoite on täynnä */
+.sart .dart.hit { transform-origin: 31px 34px; animation: dartHit 2.6s ease-in-out infinite; }
+@keyframes dartHit { 0%, 80%, 100% { transform: rotate(0); } 86% { transform: rotate(-5deg); } 93% { transform: rotate(3deg); } }
+/* liekki */
+.flame .fl-out { fill: #d9d0bd; }
+.flame .fl-in { fill: #fffdf5; }
+.flame.lit .fl-out { fill: #ff8a1f; }
+.flame.lit .fl-in { fill: #ffcf33; }
+.flame.lit .fl-out, .flame.lit .fl-in { transform-origin: 32px 58px; animation: flicker 2.4s ease-in-out infinite; }
+@keyframes flicker { 0%, 100% { transform: scale(1, 1) rotate(0); } 30% { transform: scale(1.03, .97) rotate(-2deg); } 60% { transform: scale(.98, 1.04) rotate(1.5deg); } }
+/* viikko: yksi lohko jokaiselle päivälle */
+.week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
+.wd { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.wd i { width: 100%; height: 22px; border-radius: 7px; display: grid; place-items: center; background: color-mix(in srgb, var(--ink) 10%, transparent); color: #17140f; }
+.wd i svg { width: 13px; height: 13px; }
+.wd.on i { background: var(--good); color: var(--card); animation: wdIn .45s cubic-bezier(.3, 1.5, .5, 1) both; }
+@keyframes wdIn { from { transform: scale(.3); opacity: 0; } }
+.wd:nth-child(2) i { animation-delay: .05s; } .wd:nth-child(3) i { animation-delay: .1s; } .wd:nth-child(4) i { animation-delay: .15s; } .wd:nth-child(5) i { animation-delay: .2s; } .wd:nth-child(6) i { animation-delay: .25s; } .wd:nth-child(7) i { animation-delay: .3s; }
+.wd.miss i { background: var(--bad); color: var(--card); animation: wdIn .45s cubic-bezier(.3, 1.5, .5, 1) both; }
+.wd.now i { box-shadow: 0 0 0 2px var(--ink); }
+.wd.fut i { opacity: .5; }
+.wd span { font-size: 12px; font-weight: 800; color: var(--muted); }
+.wd.now span { color: var(--ink); }
+html.reduce-motion .flame.lit path, html.reduce-motion .sart .dart.hit, html.reduce-motion .hbar i, html.reduce-motion .wd.miss i, html.reduce-motion .wd.on i { animation: none; }
+
+/* ---- Kotinäyttöohje ---- */
+.inst { display: grid; gap: 10px; width: 100%; }
+.inst .seg { justify-self: start; }
+.inst ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.inst li { display: flex; align-items: flex-start; gap: 10px; font-size: 15.5px; line-height: 1.4; }
+.inst li .n { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 13px; background: var(--sun); color: var(--on-sun); }
+.inst .ii { width: 18px; height: 18px; vertical-align: -3px; color: var(--accent); }
+.inst[data-os="ios"] .inst-android, .inst[data-os="android"] .inst-ios { display: none; }
+.inst-note { margin: 0; font-size: 14px; color: var(--muted); }
+.tour-card.wide { width: min(460px, calc(100vw - 32px)); }
+.tour-card .inst { margin-top: 12px; }
+
+/* Yläpalkin aaltoileva alareuna: palkki leikataan aallon muotoon, ja reunaa seuraa sama aaltoviiva */
+.top { --wave: 10px; border-bottom: 0 !important; padding-bottom: calc(10px + var(--wave));
+  -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - var(--wave)) no-repeat, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='10'%3E%3Cpath d='M0 0H28V5Q21 9.5 14 5T0 5Z'/%3E%3C/svg%3E") bottom left / 28px var(--wave) repeat-x;
+          mask: linear-gradient(#000 0 0) top / 100% calc(100% - var(--wave)) no-repeat, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='10'%3E%3Cpath d='M0 0H28V5Q21 9.5 14 5T0 5Z'/%3E%3C/svg%3E") bottom left / 28px var(--wave) repeat-x; }
+.top::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: var(--wave); pointer-events: none; background: var(--ink); opacity: .45;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='10'%3E%3Cpath d='M0 5Q7 0.5 14 5T28 5' fill='none' stroke='%23000' stroke-width='1.8'/%3E%3C/svg%3E") left / 28px var(--wave) repeat-x;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='10'%3E%3Cpath d='M0 5Q7 0.5 14 5T28 5' fill='none' stroke='%23000' stroke-width='1.8'/%3E%3C/svg%3E") left / 28px var(--wave) repeat-x; }
+
+/* ---- Yläpalkin pisterengas ja asetusratas ---- */
+.ptring { gap: 6px; padding-left: 6px; }
+.ptring .pr { width: 24px; height: 24px; transform: rotate(-90deg); flex: none; }
+.ptring .pr-bg { fill: none; stroke: color-mix(in srgb, var(--ink) 14%, transparent); stroke-width: 3.2; }
+.ptring .pr-fg { fill: none; stroke: var(--good); stroke-width: 3.2; stroke-linecap: round; transition: stroke-dashoffset .7s cubic-bezier(.2, .8, .2, 1); }
+.ptring small { font-weight: 700; font-size: 13px; color: var(--muted); margin-left: -3px; }
+#acctPill { gap: 6px; }
+#acctPill .gear { width: 17px; height: 17px; flex: none; opacity: .8; transition: transform .4s ease; }
+#acctPill:hover .gear { transform: rotate(60deg); }
+
+/* ---- Kysymyksen otsikko ---- */
+.qlabel { margin: 0 10px 6px 0; vertical-align: 2px; }
+.qtext { line-height: 1.45; }
+
+/* ---- Oppitunnin ja treenin alapalkki: aina näkyvissä, palaute siinä ---- */
+.lfoot { position: sticky; bottom: calc(var(--tabh, 0px) + 10px); z-index: 15; margin-top: 14px; padding: 10px; border-radius: 20px;
+  background: var(--glass-solid); border: 1.5px solid var(--line); box-shadow: 0 -6px 26px -14px rgba(0, 0, 0, .45);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); transition: background .25s, border-color .25s; }
+.lfoot .navrow { margin-top: 0; }
+.lfoot.ok { border-color: var(--good); background: color-mix(in srgb, var(--good) 16%, var(--glass-solid)); }
+.lfoot.no { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 13%, var(--glass-solid)); }
+.lfoot .fb { display: flex; flex-direction: column; gap: 2px; padding: 4px 8px 12px; font-size: 16.5px; line-height: 1.45; max-height: 36vh; overflow-y: auto; animation: fbIn .3s cubic-bezier(.2, .8, .2, 1) both; }
+.lfoot.ok .fb > b { color: var(--good); } .lfoot.no .fb > b { color: var(--bad); }
+.lfoot .fb .vis { margin: 6px 0 0; justify-content: flex-start; }
+.lfoot .fb .vis svg { max-height: 120px; width: auto; max-width: 100%; }
+@keyframes fbIn { from { opacity: 0; transform: translate3d(0, 8px, 0); } }
+html.reduce-motion .lfoot .fb { animation: none; }
+/* kuvat mahtuvat näytölle niin, että napit näkyvät */
+#lesson .card .vis svg.staff, #run .card .vis svg.staff { max-height: 32vh; }
+#lesson .card .vis svg.piano, #run .card .vis svg.piano { max-height: 34vh; }
+.playrow { display: flex; justify-content: center; margin-top: 6px; }
+.playbtn { min-width: 150px; justify-content: center; }
+.playbtn .pi { display: inline-block; width: 1.1em; text-align: center; }
+.playbtn.on { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
