@@ -311,7 +311,7 @@
       </div>
       <div class="stat2">
         <div class="st-head">${ART.books()}<div class="st-txt"><b>Oppitunnit</b><span class="st-num">${doneCount()}<small>/ ${ALL}</small></span></div></div>
-        <div class="hbar lessons" role="progressbar" aria-label="Oppitunnit" aria-valuemin="0" aria-valuemax="${ALL}" aria-valuenow="${doneCount()}"><i style="width:${pct(doneCount(), ALL)}%"></i></div>
+        <div class="hbar ltbar" role="progressbar" aria-label="Oppitunnit" aria-valuemin="0" aria-valuemax="${ALL}" aria-valuenow="${doneCount()}"><i style="width:${pct(doneCount(), ALL)}%"></i></div>
       </div>
       <div class="stat2">
         <div class="st-head">${ART.flame(lit)}<div class="st-txt"><b>Päivän putki</b><span class="st-num">${sn}<small>${sn === 1 ? 'päivä' : 'päivää'}</small></span></div></div>
