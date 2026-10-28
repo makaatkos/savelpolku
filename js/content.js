@@ -49,7 +49,7 @@ function pyramidHTML(rows) {
   return `<div class="pyramid">${rows.map(r => `<div class="pyr-row"><span class="pyr-lab">${r[1]}</span>${R.rhythm(r[0])}</div>`).join('')}</div>`;
 }
 function tableHTML(head, rows, cls = '') {
-  return `<table class="tbl ${cls}"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  return `<div class="tblwrap"><table class="tbl ${cls}"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
 }
 function stepsHTML(steps) { // K K P ... visuaalinen askelrivi
   return `<div class="stepsrow">${steps.map(s => `<span class="stp ${s === 'P' ? 'half' : s === 'Y' ? 'aug' : 'whole'}">${s === 'Y' ? '1½' : s === 'P' ? '½' : '1'}</span>`).join('')}</div>`;

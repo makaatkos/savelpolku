@@ -619,3 +619,7 @@ html.reduce-motion .pk-help-body { animation: none; }
   .brand span:last-child { display: none; }
   .nav { gap: 2px; } .nav a { padding: 7px 9px; font-size: 14.5px; }
 }
+
+/* Leveä taulukko vierii sivusuunnassa omassa kehyksessään (keskitetty flex-rivi leikkasi vasemman reunan) */
+.tblwrap { width: 100%; max-width: 640px; overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+.tblwrap .tbl { max-width: none; min-width: 100%; }

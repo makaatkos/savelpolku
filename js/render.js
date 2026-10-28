@@ -262,7 +262,8 @@ const R = (() => {
     pos.forEach(e => {
       if (!e.beam || seen.has(e.beam)) return;
       seen.add(e.beam);
-      const g = e.beam.filter(n => !n.rest);
+      // Palkki vain koukullisille arvoille: neljäsosa- ja puolinuottitriolissa on pelkkä 3-hakasulje
+      const g = e.beam.filter(n => !n.rest && ['e', 's', 't'].includes(n.v));
       const a = e.beam[0], b = e.beam[e.beam.length - 1];
       if (g.length >= 2) {
         const x1 = g[0].x + 6.3, x2 = g[g.length - 1].x + 6.3;
