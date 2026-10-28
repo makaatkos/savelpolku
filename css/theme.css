@@ -529,23 +529,93 @@ html.reduce-motion .flame.lit path, html.reduce-motion .sart .dart.hit, html.red
 .qlabel { margin: 0 10px 6px 0; vertical-align: 2px; }
 .qtext { line-height: 1.45; }
 
-/* ---- Oppitunnin ja treenin alapalkki: aina näkyvissä, palaute siinä ---- */
-.lfoot { position: sticky; bottom: calc(var(--tabh, 0px) + 10px); z-index: 15; margin-top: 14px; padding: 10px; border-radius: 20px;
-  background: var(--glass-solid); border: 1.5px solid var(--line); box-shadow: 0 -6px 26px -14px rgba(0, 0, 0, .45);
-  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); transition: background .25s, border-color .25s; }
-.lfoot .navrow { margin-top: 0; }
-.lfoot.ok { border-color: var(--good); background: color-mix(in srgb, var(--good) 16%, var(--glass-solid)); }
-.lfoot.no { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 13%, var(--glass-solid)); }
-.lfoot .fb { display: flex; flex-direction: column; gap: 2px; padding: 4px 8px 12px; font-size: 16.5px; line-height: 1.45; max-height: 36vh; overflow-y: auto; animation: fbIn .3s cubic-bezier(.2, .8, .2, 1) both; }
+/* ---- Oppitunnin ja treenin napit: heti vaihtoehtojen alla, palaute nappien välissä ---- */
+.lfoot { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "prev fb next"; gap: 12px; align-items: center; margin-top: 14px; scroll-margin-bottom: calc(var(--tabh, 0px) + 16px); }
+.lfoot .navrow { display: contents; }
+.lfoot .navrow > :first-child { grid-area: prev; }
+.lfoot .navrow > :last-child { grid-area: next; }
+.lfoot .fb { grid-area: fb; display: flex; flex-direction: column; gap: 2px; padding: 9px 14px; border-radius: 14px; font-size: 15.5px; line-height: 1.4; border: 1.5px solid var(--line); animation: fbIn .3s cubic-bezier(.2, .8, .2, 1) both; }
+.lfoot.ok .fb { border-color: var(--good); background: color-mix(in srgb, var(--good) 15%, var(--card)); }
+.lfoot.no .fb { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, var(--card)); }
 .lfoot.ok .fb > b { color: var(--good); } .lfoot.no .fb > b { color: var(--bad); }
 .lfoot .fb .vis { margin: 6px 0 0; justify-content: flex-start; }
-.lfoot .fb .vis svg { max-height: 120px; width: auto; max-width: 100%; }
-@keyframes fbIn { from { opacity: 0; transform: translate3d(0, 8px, 0); } }
+.lfoot .fb .vis svg { max-height: 110px; width: auto; max-width: 100%; }
+@media (max-width: 620px) { .lfoot { grid-template-columns: auto 1fr; grid-template-areas: "prev next" "fb fb"; } }
+@keyframes fbIn { from { opacity: 0; transform: translate3d(0, 6px, 0); } }
 html.reduce-motion .lfoot .fb { animation: none; }
 /* kuvat mahtuvat näytölle niin, että napit näkyvät */
-#lesson .card .vis svg.staff, #run .card .vis svg.staff { max-height: 32vh; }
-#lesson .card .vis svg.piano, #run .card .vis svg.piano { max-height: 34vh; }
+#lesson .card .vis svg.staff, #run .card .vis svg.staff { max-height: min(26vh, 230px); }
+#lesson .card .vis svg.piano, #run .card .vis svg.piano { max-height: min(30vh, 260px); }
 .playrow { display: flex; justify-content: center; margin-top: 6px; }
 .playbtn { min-width: 150px; justify-content: center; }
 .playbtn .pi { display: inline-block; width: 1.1em; text-align: center; }
 .playbtn.on { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+
+/* ---- Opettajan värit tasaisiin riveihin ---- */
+.colors { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 10px; max-width: 590px; }
+.colors .sw { width: 100%; height: auto; aspect-ratio: 1; max-width: 40px; }
+@media (max-width: 900px) { .colors { grid-template-columns: repeat(8, minmax(0, 1fr)); max-width: 400px; } }
+@media (max-width: 480px) { .colors { grid-template-columns: repeat(6, minmax(0, 1fr)); max-width: 300px; } }
+
+/* ---- Jatka-nappi yläpalkin vasemmassa reunassa ---- */
+.resume-top { display: inline-flex; align-items: center; gap: 6px; flex: none; height: 38px; padding: 0 14px 0 11px; border-radius: 999px; text-decoration: none; font-weight: 800; font-size: 15px;
+  background: var(--sun); color: var(--on-sun); box-shadow: 0 4px 14px -6px rgba(0, 0, 0, .45); animation: fbIn .3s ease both; }
+.resume-top[hidden] { display: none; }
+.resume-top svg { width: 19px; height: 19px; }
+.resume-top:hover { filter: brightness(1.06); }
+@media (max-width: 1240px) { .resume-top { width: 38px; padding: 0; justify-content: center; } .resume-top span { display: none; } }
+
+/* ---- Muut-sivu ---- */
+.morelist { display: grid; gap: 12px; max-width: 640px; }
+.morecard { display: grid; grid-template-columns: 60px minmax(0, 1fr) auto; align-items: center; gap: 14px; padding: 14px; border-radius: var(--r); border: 1.5px solid var(--line); background: linear-gradient(160deg, var(--card), var(--card2)); text-decoration: none; color: var(--ink); }
+.morecard b { display: block; font-size: 19px; } .morecard small { color: var(--muted); }
+.morecard .mi.ico { color: #17140f; padding: 12px; }
+.morecard .go { font-size: 30px; color: var(--muted); }
+.morecard:hover { border-color: var(--ink); }
+
+/* ---- Piano: mustien koskettimien nimet ---- */
+.pk-blab { font: 700 8.5px 'Atkinson Hyperlegible', 'Segoe UI', sans-serif; fill: #f3ead6; text-anchor: middle; pointer-events: none; }
+
+/* ---- Asteikot-työkalu ---- */
+.sc-top { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px 28px; align-items: center; }
+.sc-staff { min-width: 0; }
+.sc-staff svg.staff { max-width: 520px !important; width: 100%; }
+@media (max-width: 760px) { .sc-top { grid-template-columns: minmax(0, 1fr); } }
+.stepsx { display: grid; gap: 8px; justify-items: center; margin: 10px 0 12px; }
+.sx-head { font-size: 15px; }
+.sx-row { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.sx { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.sx small { font-weight: 700; color: var(--muted); font-size: 13px; }
+.sx-key { display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: center; font-size: 13.5px; color: var(--muted); }
+.sx-key span { display: inline-flex; align-items: center; gap: 6px; }
+.sx-key .stp { height: 24px; font-size: 12px; font-style: normal; border-width: 1.5px; border-radius: 7px; }
+.sx-key .stp.whole { width: 34px; } .sx-key .stp.half { width: 24px; } .sx-key .stp.aug { width: 40px; }
+/* Kaksi kuvaa päällekkäin: kumpikin pienempi, jotta napit mahtuvat ruudulle */
+#lesson .card:has(.vis + .vis) .vis svg.staff, #run .card:has(.vis + .vis) .vis svg.staff { max-height: min(17vh, 170px); }
+#lesson .card:has(.vis + .vis) .vis svg.piano { max-height: min(20vh, 190px); }
+/* Puhelimessa nimi ja värit opettajan alle koko leveydelle, jotta värinapit ovat tarpeeksi isoja */
+@media (max-width: 560px) { .mascot-set > div:last-child { flex-basis: 100%; } .colors { max-width: 320px; } }
+
+/* ---- Pianon ohje napin takana ---- */
+.pk-help { width: 100%; max-width: 560px; display: grid; justify-items: center; }
+.pk-help > summary { list-style: none; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; padding: 7px 14px 7px 8px; border-radius: 999px; font-weight: 800; font-size: 14px;
+  color: var(--ink); background: var(--card2); border: 1.5px solid var(--line); transition: border-color .2s, background .2s; user-select: none; }
+.pk-help > summary::-webkit-details-marker { display: none; }
+.pk-help > summary:hover { border-color: var(--ink); }
+.pk-help > summary .q { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; background: var(--accent); color: var(--on-accent); }
+.pk-help[open] > summary { background: var(--card); border-color: var(--accent); }
+.pk-help-body { margin-top: 10px; width: 100%; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; padding: 12px; border-radius: 16px;
+  background: var(--card); border: 1.5px solid var(--line); animation: fbIn .25s ease both; }
+.hrow { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; align-items: center; text-align: left; }
+.hrow b { display: block; font-size: 14.5px; } .hrow small { color: var(--muted); font-size: 13.5px; }
+.hic { display: grid; place-items: center; height: 30px; }
+.hk { display: block; } .hk rect { pointer-events: none; cursor: default; }
+.hk-band { font: 800 10px 'Bricolage Grotesque', 'Segoe UI', sans-serif; padding: 3px 4px; border-radius: 5px; background: color-mix(in srgb, var(--ink) 14%, transparent); white-space: nowrap; }
+.hk-mid { display: grid; justify-items: center; line-height: 1; color: var(--accent); font-size: 12px; } .hk-mid small { font-weight: 800; font-size: 11px; }
+html.reduce-motion .pk-help-body { animation: none; }
+/* Kapea tietokoneen ikkuna: yläpalkki tiivistetään, jotta kaikki mahtuu */
+@media (min-width: 861px) and (max-width: 1060px) {
+  .top { gap: 10px; }
+  .brand span:last-child { display: none; }
+  .nav { gap: 2px; } .nav a { padding: 7px 9px; font-size: 14.5px; }
+}

@@ -104,6 +104,7 @@ const ICONS = (() => {
   // Alavalikon viivakuvakkeet (värit tulevat teemasta)
   const line = d => `<svg class="tabico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
   const TAB = {
+    muut: line('<rect x="4" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.8"/><circle cx="16.75" cy="16.75" r="3.4"/>'),
     home: line('<path d="M3 11 L12 4 L21 11"/><path d="M5 10 V20 H19 V10"/><path d="M10 20 V14 H14 V20"/>'),
     polut: line('<circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18 H14 a3.5 3.5 0 0 0 0 -7 H10 a3.5 3.5 0 0 1 0 -7 H15.5"/>'),
     treeni: line('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/>'),

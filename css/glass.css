@@ -183,11 +183,11 @@ html.reduce-motion .pbar i { animation: none; }
 
 /* Alavalikko: seitsemän kohtaa mahtuu puhelimen leveydelle */
 @media (max-width: 860px) {
-  .tabbar { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); padding-left: max(4px, env(safe-area-inset-left, 0px)); padding-right: max(4px, env(safe-area-inset-right, 0px)); }
-  .tabbar a { font-size: 10.5px; min-width: 0; padding: 4px 0; letter-spacing: -.1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tabbar { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding-left: max(4px, env(safe-area-inset-left, 0px)); padding-right: max(4px, env(safe-area-inset-right, 0px)); }
+  .tabbar a { font-size: 12px; min-width: 0; padding: 4px 0; letter-spacing: -.1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .tabico { width: 22px; height: 22px; }
 }
-@media (max-width: 360px) { .tabbar a { font-size: 9.5px; } }
+@media (max-width: 360px) { .tabbar a { font-size: 11px; } }
 /* Sivu ei koskaan vieri sivusuunnassa, vaikka elementti liukuisi animaatiossa reunan yli */
 html, body { overflow-x: clip; }
 #app, .lesson { overflow-x: clip; overflow-y: visible; overflow-clip-margin: 16px; }

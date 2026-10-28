@@ -102,7 +102,6 @@
     const ap = $('#acctPill');
     if (ap) ap.innerHTML = `<span>${esc(Sync.user ? (Sync.user.displayName || 'Tili').split(' ')[0] : (Sync.enabled ? 'Kirjaudu' : 'Asetukset'))}</span>${GEAR}`;
     const tb = $('#tabbar'); document.documentElement.style.setProperty('--tabh', tb && getComputedStyle(tb).position === 'fixed' ? tb.offsetHeight + 'px' : '0px');
-    $('#streak').textContent = streakNow();
   }
 
   // ---------- XP, putki, merkit ----------
@@ -193,10 +192,14 @@
     else if (v.html) h = v.html;
     return `<div class="vis">${h}</div>`;
   }
-  // Mitä tehtävän Soita-nappi soittaa: oma ääni, tai rytmikuvasta johdettu rytmi
-  function playOf(st) {
+  // Mitä Soita-nappi soittaa. Tehtävissä (task) nappi on vain kuuntelu- ja rytmitehtävissä,
+  // joissa ääni on oikea apuväline; selitysaskelissa soitetaan aina, kun ääni on tarjolla.
+  function playOf(st, task) {
     if (!st) return null;
-    if (st.play) return st.play;
+    if (task) { if (st.autoplay) return st.play; const r = rhythmOf(st); return r ? (st.play && st.play.rhythm ? st.play : r) : null; }
+    return st.play || rhythmOf(st);
+  }
+  function rhythmOf(st) {
     const vs = [].concat(st.v || []);
     const rv = vs.find(v => v && typeof v.rhythm === 'string' && v.rhythm.trim());
     if (!rv) return null;
@@ -390,7 +393,7 @@
       body = `<div class="card">${bubble(L.answered ? (L.lastOk ? 'party' : 'oops') : 'think', `<span class="qlabel">Kysymys</span><b class="qtext">${st.q}</b>`)}
         ${vis(st.v)}
         <div class="opts ${st.o.some(o => String(o).startsWith('<svg')) ? 'opt-staff' : ''}">${st.o.map((o, k) => `<button class="opt ${L.answered ? (k === st.a ? 'right' : (k === L.pick ? 'wrong' : 'dim')) : ''}" data-opt="${k}" ${L.answered ? 'disabled' : ''}><span class="k">${k + 1}</span>${o}</button>`).join('')}</div>
-        ${playOf(st) ? `<div class="playrow"><button class="btn ghost playbtn" data-act="play">▶ Soita</button></div>` : ''}
+        ${playOf(st, true) ? `<div class="playrow"><button class="btn ghost playbtn" data-act="play">▶ Soita</button></div>` : ''}
       </div>`;
     } else if (st.pick) {
       body = `<div class="card">${bubble(L.answered ? (L.lastOk ? 'party' : 'oops') : 'think', `<span class="qlabel">Tehtävä</span><b class="qtext">${st.pick}</b>`)}
@@ -432,7 +435,7 @@
     markPathDay();
     if (!L.seen.has(L.i)) { L.seen.add(L.i); if (L.lastOk) { L.right++; addXP(5); } }
     stat('oppitunnit', L.lastOk);
-    renderStep();
+    renderStep(); showFoot();
   }
   function lessonPick(midi) {
     const st = L.les.steps[L.i];
@@ -441,7 +444,7 @@
     L.lastOk = st.target.some(t => T.midi(t) === midi);
     markPathDay();
     if (!L.seen.has(L.i)) { L.seen.add(L.i); if (L.lastOk) { L.right++; addXP(5); } }
-    renderStep();
+    renderStep(); showFoot();
   }
   function lessonNext() {
     L.i++; L.answered = false; L.pick = null;
@@ -536,11 +539,13 @@
       <div class="card ${Q.answered ? '' : 'enter'}">${bubble(Q.answered ? (Q.ok ? 'party' : 'oops') : 'think', `<b class="qtext">${c.q}</b>`)}
         ${vis(c.v)}
         <div class="opts ${c.optClass || ''}">${c.o.map((o, k) => `<button class="opt ${Q.answered ? (k === c.a ? 'right' : (k === Q.pick ? 'wrong' : 'dim')) : ''}" data-ropt="${k}" ${Q.answered ? 'disabled' : ''}><span class="k">${k + 1}</span>${o}</button>`).join('')}</div>
-        ${playOf(c) ? `<div class="playrow"><button class="btn ghost playbtn" data-act="rplay">▶ Soita</button></div>` : ''}
+        ${playOf(c, true) ? `<div class="playrow"><button class="btn ghost playbtn" data-act="rplay">▶ Soita</button></div>` : ''}
       </div>
       <div class="lfoot ${Q.answered ? (Q.ok ? 'ok' : 'no') : ''}">${Q.answered ? `<div class="fb" role="status"><b>${Q.cheer}</b>${c.e ? `<span>${c.e}</span>` : ''}${c.ev ? vis(c.ev) : ''}</div>` : ''}
         <div class="navrow"><span></span><button class="btn primary big" data-act="rnext" ${Q.answered ? '' : 'disabled'}>${Q.i === Q.n - 1 ? 'Tulokset →' : 'Seuraava →'}</button></div></div>`;
   }
+  // Vastauksen jälkeen varmistetaan, että Seuraava-nappi näkyy
+  const showFoot = () => { const f = document.querySelector('.lfoot'); if (f) f.scrollIntoView({ block: 'nearest', behavior: reduceMotion() ? 'auto' : 'smooth' }); };
   function runAnswer(k) {
     if (Q.answered) return;
     const c = Q.cur;
@@ -549,8 +554,8 @@
     if (Q.ok) { Q.right++; per.r++; Q.streak++; S.combo++; S.maxCombo = Math.max(S.maxCombo, S.combo); addXP(3 + Math.min(5, Math.floor(Q.streak / 3))); }
     else { Q.streak = 0; S.combo = 0; save(); }
     savePart();
-    renderRun();
-    if (!Q.ok && c.play) setTimeout(() => startPlay(c.play), 200);
+    renderRun(); showFoot();
+    if (!Q.ok && c.autoplay && c.play) setTimeout(() => startPlay(c.play), 200);
   }
   // Kierroksen tulokset kirjataan vasta lopussa
   function commitRun() {
@@ -645,17 +650,19 @@
     const accSel = `<option value="0">♮</option><option value="1">♯</option><option value="-1">♭</option>`;
     return `<h1>Työkalut</h1><p class="lead">Kokeile vapaasti, kuuntele ja katso. Näillä voit myös tarkistaa kotitehtävät.</p>
     <div class="tools">
-      <section class="tool"><h2>Piano ja viivasto</h2><p class="tool-help">Klikkaa kosketinta. Näet nuotin viivastolla ja sen nimen oktaavialan merkinnällä (esim. fis¹). Palkki koskettimien yläpuolella kertoo oktaavialan.</p>
-        <div class="seg sm">${[['1', '♯-nimet'], ['-1', '♭-nimet']].map(([v, l]) => `<button data-spell="${v}" class="${String(TT.spell) === v ? 'on' : ''}">${l}</button>`).join('')}</div>
-        <div id="tPianoOut" class="tool-out"><p class="tool-help">Ei vielä valittua säveltä.</p></div><div class="vis scrollx" data-tool="piano" id="tPiano">${R.piano({ from: 'C2', oct: 4 })}</div></section>
+      <section class="tool"><h2>Piano ja viivasto</h2><p class="tool-help">Klikkaa kosketinta. Näet nuotin viivastolla ja sen nimen oktaavialan merkinnällä (esim. f¹). Palkki koskettimien yläpuolella kertoo oktaavialan.</p>
+        <p class="tool-help"><b>Mustalla koskettimella on kaksi nimeä.</b> <b>♯-nimet</b> nimeävät sen alemman valkoisen koskettimen korotuksena (f → <b>fis</b>), <b>♭-nimet</b> ylemmän alennuksena (g → <b>ges</b>). Valinta vaihtaa mustien koskettimien nimet pianossa ja valitun sävelen nuotin.</p>
+        <div class="seg sm" role="tablist" aria-label="Mustien koskettimien nimet">${[['1', '♯-nimet'], ['-1', '♭-nimet']].map(([v, l]) => `<button data-spell="${v}" class="${String(TT.spell) === v ? 'on' : ''}">${l}</button>`).join('')}</div>
+        <div id="tPianoOut" class="tool-out"><p class="tool-help">Ei vielä valittua säveltä.</p></div><div class="vis scrollx" data-tool="piano" id="tPiano">${toolPianoSvg()}</div></section>
       <section class="tool"><h2>Sointurakentaja</h2><p class="tool-help">Valitse pohjasävel ja sointutyyppi. Näet soinnun viivastolla ja pianossa sekä sen rakenteen tersseinä alhaalta ylös.</p>
         <div class="formrow"><label>Pohjasävel <select id="cRoot">${L7}</select></label><label><select id="cAcc">${accSel}</select></label>
         <label>Tyyppi <select id="cType">${Object.keys(T.CHORDS).map(t => `<option value="${t}">${T.CHORD_FI[t]}</option>`).join('')}</select></label>
         <label>Muoto <select id="cInv"><option value="0">perusmuoto</option><option value="1">1. käännös (⁶)</option><option value="2">2. käännös (⁶₄)</option><option value="3">3. käännös</option></select></label></div>
         <div id="cOut" class="tool-out"></div></section>
-      <section class="tool"><h2>Asteikot</h2><p class="tool-help">Valitse perussävel ja asteikko. Askelrivillä 1 = sävelaskel, ½ = puoli sävelaskelta, 1½ = ylinouseva sekunti.</p>
-        <div class="formrow"><label>Perussävel <select id="sRoot">${L7}</select></label><label><select id="sAcc">${accSel}</select></label>
+      <section class="tool"><h2>Asteikot</h2><p class="tool-help">Valitse perussävel ja asteikko. Näet asteikon viivastolla ja pianossa sekä välimatkat sävelestä seuraavaan.</p>
+        <div class="sc-top"><div class="formrow"><label>Perussävel <select id="sRoot">${L7}</select></label><label><select id="sAcc">${accSel}</select></label>
         <label>Asteikko <select id="sType">${['duuri', 'luonnollinen', 'harmoninen', 'melodinen', 'itämainen'].map(t => `<option value="${t}">${t === 'duuri' ? 'duuri' : t + ' molli'}</option>`).join('')}<option value="krom">kromaattinen</option></select></label></div>
+        <div id="sStaff" class="sc-staff"></div></div>
         <div id="sOut" class="tool-out"></div></section>
       <section class="tool"><h2>Intervallimittari</h2><p class="tool-help">Valitse alempi sävel ja intervalli. Näet ylemmän sävelen ja säännön: kuuluuko ylempi sävel alemman sävelen duuriasteikkoon?</p>
         <div class="formrow"><label>Alempi sävel <select id="iLo">${['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C#4', 'Eb4', 'F#4', 'Ab4', 'Bb4', 'Db4', 'G#4'].map(n => `<option value="${n}">${T.octName(n)}</option>`).join('')}</select></label>
@@ -688,8 +695,14 @@
     if (st === 'krom') { const c = T.chromatic(sr); sc = c.up; lab = 'kromaattinen ylöspäin'; }
     else { sc = T.scale(sr, st); lab = st === 'duuri' ? T.name(sr) + '-duuri' : `${st} ${T.name(sr).toLowerCase()}-molli`; }
     const steps = sc.slice(1).map((n, i) => { const d = T.midi(n) - T.midi(sc[i]); return d === 1 ? 'P' : d === 2 ? 'K' : 'Y'; });
-    g('sOut').innerHTML = `<div class="sym sm">${lab}</div><div class="tool-vis">${R.staff({ clef: 'g', notes: sc, names: 'fi', forceAcc: true, colW: st === 'krom' ? 28 : 36 })}</div><div class="vis">${R.piano({ from: 'C4', oct: 2, marks: sc.map(n => ({ n, lab: T.name(n).toLowerCase() })), legend: false })}</div>
-      ${st !== 'krom' ? stepsHTML(steps) : ''}<button class="btn ghost" data-tplay="${sc.join(',')}" data-seq="1">▶ Soita</button>`;
+    g('sStaff').innerHTML = `<div class="sym sm">${lab}</div>${R.staff({ clef: 'g', notes: sc, names: 'fi', forceAcc: true, colW: st === 'krom' ? 28 : 36 })}`;
+    const nm = n => T.name(n).toLowerCase();
+    const STEP = { K: ['whole', '1'], P: ['half', '½'], Y: ['aug', '1½'] };
+    g('sOut').innerHTML = `<div class="vis">${R.piano({ from: 'C4', oct: 2, marks: sc.map(n => ({ n, lab: nm(n) })), legend: false })}</div>
+      ${st !== 'krom' ? `<div class="stepsx"><b class="sx-head">Välimatkat sävelestä seuraavaan</b>
+        <div class="sx-row">${steps.map((s, i) => `<div class="sx"><span class="stp ${STEP[s][0]}">${STEP[s][1]}</span><small>${nm(sc[i])}–${nm(sc[i + 1])}</small></div>`).join('')}</div>
+        <div class="sx-key"><span><i class="stp whole">1</i> sävelaskel (välissä yksi kosketin)</span><span><i class="stp half">½</i> puoli sävelaskelta (viereinen kosketin)</span>${steps.includes('Y') ? '<span><i class="stp aug">1½</i> puolitoista sävelaskelta</span>' : ''}</div></div>` : ''}
+      <button class="btn ghost" data-tplay="${sc.join(',')}" data-seq="1">▶ Soita</button>`;
     // intervalli
     const lo = g('iLo').value, ab = g('iAb').value;
     const { q, num } = T.ivFromAbbr(ab);
@@ -708,7 +721,9 @@
       <p>${k === 0 ? 'Ei etumerkkejä' : Math.abs(k) + (k > 0 ? ' korotusta: ' : ' alennusta: ') + (k > 0 ? T.SHARP_ORDER.slice(0, k).map(l => T.name({ l, acc: 1, oct: 4 }).toLowerCase()) : T.FLAT_ORDER.slice(0, -k).map(l => T.name({ l, acc: -1, oct: 4 }).toLowerCase())).join(', ')}</p>
       <button class="btn ghost" data-tplay="${T.scale(T.MAJOR[k] + '4', 'duuri').join(',')}" data-seq="1">▶ Duuriasteikko</button>`;
   }
+  const toolPianoSvg = marks => R.piano({ from: 'C2', oct: 4, octAll: true, blackNames: TT.spell, marks: marks || [] });
   function toolPiano(m) {
+    TT.pianoNote = m;
     const out = document.getElementById('tPianoOut'); if (!out) return;
     const pc = m % 12, oct = Math.floor(m / 12) - 1;
     const sharpN = [[0, 0], [0, 1], [1, 0], [1, 1], [2, 0], [3, 0], [3, 1], [4, 0], [4, 1], [5, 0], [5, 1], [6, 0]][pc];
@@ -717,7 +732,7 @@
     const n = T.str({ l, acc, oct });
     const clef = m < 60 ? 'f' : 'g';
     const enh = acc !== 0 ? ` = ${T.octName(T.str({ l: (TT.spell > 0 ? flatN : sharpN)[0], acc: (TT.spell > 0 ? flatN : sharpN)[1], oct }))}` : '';
-    const tp = document.getElementById('tPiano'); if (tp) tp.innerHTML = R.piano({ from: 'C2', oct: 4, marks: [{ n, lab: T.octName(n) }] });
+    const tp = document.getElementById('tPiano'); if (tp) tp.innerHTML = toolPianoSvg([{ n, lab: T.octName(n) }]);
     out.innerHTML = `<div class="pnote">${R.staff({ clef, notes: [n], forceAcc: true })}<div><div class="sym">${T.octName(n)}${enh}</div><small>${T.OCT_FI[oct] || ''}</small></div></div>`;
   }
 
@@ -726,6 +741,10 @@
     return `<h1>Sanasto</h1><p class="lead">Teoriakäsitteet lyhyesti. Kirjoita hakukenttään.</p>
       <input class="search" id="gSearch" placeholder="Hae, esim. johtosävel" autocomplete="off">
       <div class="gloss" id="gList">${GLOSSARY.slice().sort((a, b) => a[0].localeCompare(b[0], 'fi')).map(([t, d]) => `<div class="gitem" data-t="${esc(t.toLowerCase())} ${esc(d.toLowerCase())}"><b>${t}</b><span>${d}</span></div>`).join('')}</div>`;
+  }
+  function viewMore() {
+    const items = [['tyokalut', 'Työkalut', 'Piano, sointurakentaja, asteikot, intervallimittari ja kvinttiympyrä'], ['sanasto', 'Sanasto', 'Termit ja merkit lyhyesti selitettyinä'], ['merkit', 'Merkit', 'Ansaitsemasi merkit ja edistyminen']];
+    return `<h1>Muut</h1><div class="morelist">${items.map(([id, t, d]) => `<a class="morecard" href="#/${id}"><span class="mi ico">${ICONS.TAB[id]}</span><span><b>${t}</b><small>${d}</small></span><span class="go" aria-hidden="true">›</span></a>`).join('')}</div>`;
   }
   function viewBadges() {
     return `<h1>Merkit</h1><p class="lead">Kerää merkkejä harjoittelemalla. ${Object.keys(S.badges).filter(k => BADGES.find(b => b.id === k)).length}/${BADGES.length} ansaittu.</p>
@@ -777,7 +796,7 @@
       </section>`;
   }
   function viewSettings() {
-    const cols = [['#ffcf33', 'Keltainen'], ['#d98a2b', 'Oranssi'], ['#f07a5f', 'Koralli'], ['#e8a3a0', 'Pinkki'], ['#c9a3e8', 'Laventeli'], ['#8fb1f0', 'Sininen'], ['#a9c1d9', 'Taivas'], ['#6fcfc0', 'Turkoosi'], ['#a8d5b5', 'Minttu'], ['#c5dc6a', 'Lime'], ['#c69a6d', 'Kaakao'], ['#b8b2a7', 'Harmaa'], ['#f5f0e6', 'Valkoinen']];
+    const cols = [['#ffcf33', 'Keltainen'], ['#d98a2b', 'Oranssi'], ['#f07a5f', 'Koralli'], ['#e8a3a0', 'Pinkki'], ['#c9a3e8', 'Laventeli'], ['#8fb1f0', 'Sininen'], ['#a9c1d9', 'Taivas'], ['#6fcfc0', 'Turkoosi'], ['#a8d5b5', 'Minttu'], ['#c5dc6a', 'Lime'], ['#c69a6d', 'Kaakao'], ['#b8b2a7', 'Harmaa'], ['#f5f0e6', 'Valkoinen'], ['#e2557a', 'Vadelma'], ['#ffb38a', 'Aprikoosi'], ['#f2e86d', 'Sitruuna'], ['#a3b55c', 'Oliivi'], ['#5f9e6e', 'Metsä'], ['#3f8f9a', 'Petrooli'], ['#4f7fd9', 'Meri'], ['#7a6fd6', 'Indigo'], ['#a0659e', 'Luumu'], ['#c0643f', 'Ruoste'], ['#6b6f76', 'Grafiitti']];
     return `<h1>Asetukset</h1>
       <section class="settings">
         <div class="setrow mascot-set"><div class="mascot-wrap">${Mascot.svg('wow', S.set.color, 110)}</div><div>
@@ -842,7 +861,7 @@
       { sel: ['#nav [data-nav="polut"]', '#tabbar [data-nav="polut"]'], t: 'Polut', x: 'Kaikki 41 oppituntia aiheittain, sopivassa oppimisjärjestyksessä.' },
       { sel: ['#nav [data-nav="treeni"]', '#tabbar [data-nav="treeni"]'], t: 'Treeni', x: 'Loputtomasti uusia tehtäviä kaikista aiheista. Kun teet kierroksen loppuun, kortti muuttuu vihreäksi.' },
       { sel: ['#nav [data-nav="koe"]', '#tabbar [data-nav="koe"]'], t: 'Taitotesti', x: 'Kokeen harjoitus: tehtäviä kaikista aiheista sekaisin. Lopuksi näet, mitä kannattaa kerrata.' },
-      { sel: ['#nav [data-nav="tyokalut"]', '#tabbar [data-nav="tyokalut"]'], t: 'Työkalut', x: 'Piano, sointurakentaja, asteikot, intervallimittari ja kvinttiympyrä. Kokeile ja kuuntele vapaasti.' },
+      { sel: ['#nav [data-nav="tyokalut"]', '#tabbar [data-nav="muut"]'], t: 'Työkalut', x: 'Puhelimessa Työkalut, Sanasto ja Merkit löytyvät Muut-kohdasta. Piano, sointurakentaja, asteikot, intervallimittari ja kvinttiympyrä. Kokeile ja kuuntele vapaasti.' },
       Sync.enabled && !Sync.user
         ? { sel: '#acctPill', t: 'Kirjaudu, niin mikään ei katoa', x: 'Kun kirjaudut Google-tilillä, edistymisesi tallentuu tilillesi, ja voit jatkaa millä tahansa laitteella. Suosittelen kirjautumaan heti.', login: true }
         : { sel: '#acctPill', t: 'Asetukset', x: 'Täältä voit vaihtaa teeman, nimetä minut uudelleen ja siirtää edistymisesi toiselle laitteelle.' },
@@ -1019,11 +1038,28 @@
 
   // ================= REITITYS =================
   // Sivujen järjestys siirtymän suuntaa varten (vasemmalle / oikealle)
-  const NAV_ORDER = ['home', 'polut', 'oppitunti', 'treeni', 'koe', 'tyokalut', 'sanasto', 'merkit', 'asetukset'];
-  let lastTop = null;
+  const NAV_ORDER = ['home', 'polut', 'oppitunti', 'treeni', 'koe', 'muut', 'tyokalut', 'sanasto', 'merkit', 'asetukset'];
+  let lastTop = null, lastHash = null;
+  // Harjoitus, josta käyttäjä lähti (oppitunti, treeni tai taitotesti), jos se on yhä kesken
+  function activityOf(hh) {
+    const [x, y] = (hh || '').replace(/^#\/?/, '').split('#')[0].split('/');
+    if (x === 'oppitunti' && LESSONS[y] && !S.done[y]) return { t: LESSONS[y].title };
+    if (x === 'treeni' && y && partOf('t', tKey(y))) return { t: y === 'sekoitus' ? 'Pikatreeni' : (P.get(y) || {}).name || 'Treeni' };
+    if (x === 'koe' && y && partOf('e', y)) return { t: (EXAM_LIST.find(e => e.id === y) || {}).t || 'Taitotesti' };
+    return null;
+  }
+  function updResume() {
+    const b = $('#resumeBtn'); if (!b) return;
+    const h = S.last && S.last.h, act = h && location.hash !== h ? activityOf(h) : null;
+    b.hidden = !act;
+    if (act) { b.href = h; b.title = 'Jatka: ' + act.t; b.setAttribute('aria-label', 'Jatka: ' + act.t); }
+  }
   const reduceMotion = () => document.documentElement.classList.contains('reduce-motion');
   function route() {
     stopPlay();
+    // Muistetaan harjoitus, josta lähdettiin muualle
+    if (lastHash && lastHash !== location.hash && /^#\/(oppitunti|treeni|koe)\/[^/]+/.test(lastHash)) { S.last = { h: lastHash.replace(/^(#\/(?:treeni|koe)\/[^/#]+).*$/, '$1') }; save(); }
+    lastHash = location.hash;
     const top = (location.hash.replace(/^#\/?/, '').split('#')[0].split('/')[0]) || 'home';
     const first = lastTop === null;
     const di = NAV_ORDER.indexOf(top) - NAV_ORDER.indexOf(lastTop);
@@ -1066,7 +1102,7 @@
   // Kirjasimen latautuminen muuttaa valikon tekstien leveyttä, joten pallo asetetaan uudelleen
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => moveInd());
   // Kortit ja rivit ilmestyvät peräkkäin pienellä viiveellä
-  const STAGGER = '.modgrid, .gengrid, .examgrid, .badges, .lessons, .gloss, .stats-row, .settings, .tools, .restable, .hero-cta';
+  const STAGGER = '.morelist, .modgrid, .gengrid, .examgrid, .badges, .lessons, .gloss, .stats-row, .settings, .tools, .restable, .hero-cta';
   function stagger(root) {
     const els = [];
     // Vain näkyvissä olevat ensimmäiset rivit porrastetaan; loput tulevat yhtä aikaa, jottei mikään jää odottamaan
@@ -1081,7 +1117,7 @@
     const h = location.hash.replace(/^#\/?/, '');
     const [a, b, c] = h.split('#')[0].split('/');
     speechSynthesis && speechSynthesis.cancel && speechSynthesis.cancel();
-    document.querySelectorAll('[data-nav]').forEach(x => x.classList.toggle('on', x.dataset.nav === (a || 'home') || (a === 'oppitunti' && x.dataset.nav === 'polut')));
+    document.querySelectorAll('[data-nav]').forEach(x => x.classList.toggle('on', x.dataset.nav === (a || 'home') || (a === 'oppitunti' && x.dataset.nav === 'polut') || (x.dataset.nav === 'muut' && ['tyokalut', 'sanasto', 'merkit'].includes(a))));
     document.body.classList.toggle('in-lesson', a === 'oppitunti' || (a === 'treeni' && !!b) || (a === 'koe' && !!b));
     let html;
     switch (a || '') {
@@ -1093,11 +1129,13 @@
       case 'tyokalut': html = viewTools(); break;
       case 'sanasto': html = viewGlossary(); break;
       case 'merkit': html = viewBadges(); break;
+      case 'muut': html = viewMore(); break;
       case 'asetukset': html = viewSettings() + footer(); break;
       case 'tietosuoja': html = viewPrivacy() + footer(); break;
       default: html = viewHome();
     }
     app.innerHTML = html;
+    updResume();
     if (a === 'oppitunti') renderStep();
     if (a === 'treeni' && b) {
       const lv = LV;
@@ -1146,7 +1184,7 @@
     if (d.ropt !== undefined) return runAnswer(+d.ropt);
     if (d.playchord) { const [r, ty] = d.playchord.split('|'); Sound.init(); Sound.play(T.chord(r, ty), 'both', 0.35); return; }
     if (d.tplay) { Sound.init(); Sound.play(d.tplay.split(','), d.seq ? 'seq' : 'both', d.seq ? 0.32 : 0.35); return; }
-    if (d.spell) { TT.spell = +d.spell; document.querySelectorAll('[data-spell]').forEach(b => b.classList.toggle('on', b === t)); return; }
+    if (d.spell) { TT.spell = +d.spell; document.querySelectorAll('[data-spell]').forEach(b => { b.classList.toggle('on', b === t); b.setAttribute('aria-selected', b === t); }); if (TT.pianoNote != null) toolPiano(TT.pianoNote); else { const tp = document.getElementById('tPiano'); if (tp) tp.innerHTML = toolPianoSvg(); } return; }
     if (d.color) { S.set.color = d.color; save(); applySettings(); return refresh(); }
     if (d.motion) { S.set.motion = d.motion; save(); applySettings(); return refresh(); }
     if (d.theme) { S.set.theme = d.theme; save(); applySettings(); return refresh(); }
@@ -1154,9 +1192,9 @@
       case 'next': stopPlay(); return lessonNext();
       case 'prev': stopPlay(); if (L.i > 0) { L.i--; L.answered = false; L.back = true; renderStep(); } return;
       case 'restart': L.resumed = false; L.i = 0; L.right = 0; L.seen = new Set(); L.answered = false; return renderStep();
-      case 'play': return togglePlay(playOf(L.les.steps[L.i]));
+      case 'play': { const s = L.les.steps[L.i]; return togglePlay(playOf(s, !!(s.q || s.pick))); }
       case 'tts': { const st = L && L.les.steps[L.i]; if (st) speak((st.t || '') + '. ' + (st.x || st.q || st.pick || '') + (L.answered && st.e ? '. ' + st.e : '')); return; }
-      case 'rplay': return togglePlay(playOf(Q.cur));
+      case 'rplay': return togglePlay(playOf(Q.cur, true));
       case 'rnext': stopPlay(); Q.i++; Q.answered = false; if (Q.i < Q.n) savePart(); return Q.i >= Q.n ? renderRun() : nextQ();
       case 'login': Sync.signIn().catch(err => toast('Kirjautuminen ei onnistunut: ' + esc(err.message || err))); return;
       case 'logout': Sync.signOut().then(() => { toast('Kirjauduit ulos. Edistyminen säilyy tällä laitteella.'); refresh(); }); return;

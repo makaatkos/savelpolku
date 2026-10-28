@@ -17,7 +17,7 @@
   <script>
     /* Versiotarkistus: jos selain näyttää vanhaa sivua välimuistista, uusin versio ladataan kerran automaattisesti.
        Uusi osoite (?v=) ohittaa välimuistin varmasti. */
-    window.SP_VERSION = 42;
+    window.SP_VERSION = 45;
     (function () {
       function fresh(v) { location.replace(location.pathname + '?v=' + v + '#/'); }
       window.SP_FRESH = fresh;
@@ -37,13 +37,14 @@
       }, 6000);
     })();
   </script>
-  <link rel="stylesheet" href="fonts/fonts.css?v=42">
-  <link rel="stylesheet" href="css/style.css?v=42">
-  <link rel="stylesheet" href="css/glass.css?v=42">
-  <link rel="stylesheet" href="css/theme.css?v=42">
+  <link rel="stylesheet" href="fonts/fonts.css?v=45">
+  <link rel="stylesheet" href="css/style.css?v=45">
+  <link rel="stylesheet" href="css/glass.css?v=45">
+  <link rel="stylesheet" href="css/theme.css?v=45">
 </head>
 <body>
   <header class="top">
+    <a href="#/" class="resume-top" id="resumeBtn" hidden><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span>Jatka</span></a>
     <a href="#/" class="brand" aria-label="Etusivu"><span id="brandMascot"></span><span>Sävel<b>polku</b></span></a>
     <nav class="nav" id="nav">
       <a href="#/" data-nav="home">Etusivu</a>
@@ -55,7 +56,6 @@
       <a href="#/merkit" data-nav="merkit">Merkit</a>
     </nav>
     <div class="topstats">
-      <span class="pill" title="Putki: harjoittelupäiviä peräkkäin"><b id="streak">0</b>&nbsp;pv</span>
       <span class="pill ptring" id="ptPill" title="Suoritetut oppitunnit"><svg class="pr" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" class="pr-bg"/><circle cx="12" cy="12" r="9" class="pr-fg" stroke-dasharray="56.55" stroke-dashoffset="56.55"/></svg><b id="xp">0</b><small>/41</small></span>
       <a href="#/asetukset" class="pill icon" id="acctPill" aria-label="Asetukset ja tili">Asetukset</a>
     </div>
@@ -66,22 +66,20 @@
     <a href="#/polut" data-nav="polut"><span>☰</span>Polut</a>
     <a href="#/treeni" data-nav="treeni"><span>◎</span>Treeni</a>
     <a href="#/koe" data-nav="koe"><span>✓</span>Testi</a>
-    <a href="#/tyokalut" data-nav="tyokalut"><span>♫</span>Työkalut</a>
-    <a href="#/sanasto" data-nav="sanasto"><span>Aa</span>Sanasto</a>
-    <a href="#/merkit" data-nav="merkit"><span>★</span>Merkit</a>
+    <a href="#/muut" data-nav="muut"><span>⋯</span>Muut</a>
   </nav>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <canvas id="confetti" aria-hidden="true"></canvas>
-  <script src="js/theory.js?v=42"></script>
-  <script src="js/audio.js?v=42"></script>
-  <script src="js/render.js?v=42"></script>
-  <script src="js/mascot.js?v=42"></script>
-  <script src="js/content.js?v=42"></script>
-  <script src="js/practice.js?v=42"></script>
-  <script src="js/firebase-config.js?v=42"></script>
-  <script src="js/sync.js?v=42"></script>
-  <script src="js/themes.js?v=42"></script>
-  <script src="js/icons.js?v=42"></script>
-  <script src="js/app.js?v=42"></script>
+  <script src="js/theory.js?v=45"></script>
+  <script src="js/audio.js?v=45"></script>
+  <script src="js/render.js?v=45"></script>
+  <script src="js/mascot.js?v=45"></script>
+  <script src="js/content.js?v=45"></script>
+  <script src="js/practice.js?v=45"></script>
+  <script src="js/firebase-config.js?v=45"></script>
+  <script src="js/sync.js?v=45"></script>
+  <script src="js/themes.js?v=45"></script>
+  <script src="js/icons.js?v=45"></script>
+  <script src="js/app.js?v=45"></script>
 </body>
 </html>

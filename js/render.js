@@ -145,7 +145,7 @@ const R = (() => {
       const mk = marks[m];
       const x = i * WW;
       const full = T.octName({ l, acc: 0, oct: from.oct + o });
-      const plain = l === 0 ? full : full.replace(/[¹²³⁴₁₂]/g, '');
+      const plain = l === 0 || opts.octAll ? full : full.replace(/[¹²³⁴₁₂]/g, '');
       whites += `<g class="pk" data-midi="${m}"><rect x="${x}" y="${Y0}" width="${WW}" height="${WH}" rx="5" class="wk${mk ? ' mk' : ''}"/>`;
       if (mk) { const w = Math.max(WW - 6, String(mk.lab).length * 7.6 + 10); whites += `<rect x="${x + WW / 2 - w / 2}" y="${Y0 + WH - 34}" width="${w}" height="24" rx="6" class="pk-pill"/><text x="${x + WW / 2}" y="${Y0 + WH - 17}" class="pk-lab on">${esc(mk.lab)}</text>`; }
       else if (showNames) whites += `<text x="${x + WW / 2}" y="${Y0 + WH - 16}" class="pk-lab${l === 0 ? ' c' : ''}">${plain}</text>`;
@@ -158,6 +158,11 @@ const R = (() => {
         blacks += `<g class="pk" data-midi="${bm}"><rect x="${bx}" y="${Y0}" width="${BW}" height="${BH}" rx="3" class="bk${bk ? ' mk' : ''}"/>`;
         // Mustan koskettimen nimi näytetään sen alapuolella omassa lapussaan, koska kosketin on kapea
         if (bk) { const w = Math.max(BW + 4, String(bk.lab).length * 7.2 + 10); blacks += `<rect x="${bx + BW / 2 - w / 2}" y="${Y0 + BH + 4}" width="${w}" height="20" rx="6" class="pk-pill"/><text x="${bx + BW / 2}" y="${Y0 + BH + 18}" class="pk-lab on blk">${esc(bk.lab)}</text>`; }
+        // Mustien koskettimien nimet (♯- tai ♭-nimet) pienellä koskettimen alaosassa
+        else if (opts.blackNames) {
+          const bo = from.oct + o, nm = opts.blackNames > 0 ? T.octName({ l, acc: 1, oct: bo }) : T.octName({ l: l + 1, acc: -1, oct: bo });
+          blacks += `<text x="${bx + BW / 2}" y="${Y0 + BH - 9}" class="pk-blab">${nm}</text>`;
+        }
         blacks += `</g>`;
       }
     }
@@ -165,8 +170,18 @@ const R = (() => {
     const H = Y0 + WH + (under ? 32 : 4);
     const svg = `<svg class="piano" viewBox="-14 -2 ${W + 28} ${H + 2}" style="max-width:${Math.round(W * 1.5)}px" role="img" aria-label="piano">${top}${whites}${blacks}${under}</svg>`;
     if (opts.legend === false) return svg;
+    // Ohje piilossa napin takana: kuvat koskettimista ja lyhyet selitykset
     const anyMark = Object.keys(marks).length > 0;
-    return `<figure class="pianofig">${svg}<figcaption class="pk-legend">${anyMark ? '<span><i class="lg-mark"></i>korostettu kosketin = sävel, josta puhutaan</span>' : ''}<span><i class="lg-white"></i>valkoinen = perussävel (c d e f g a h)</span><span><i class="lg-black"></i>musta = korotettu ♯ tai alennettu ♭ sävel</span></figcaption></figure>`;
+    const key = (cls, w = 16, h = 26) => `<svg class="hk" viewBox="0 0 ${w + 2} ${h + 2}" width="${w + 2}" height="${h + 2}" aria-hidden="true"><rect x="1" y="1" width="${w}" height="${h}" rx="3" class="${cls}"/></svg>`;
+    const rows = [
+      anyMark && [key('wk mk'), 'Korostettu kosketin', 'sävel, josta puhutaan'],
+      [key('wk'), 'Valkoinen kosketin', 'perussävel: c d e f g a h'],
+      [key('bk', 11, 18), 'Musta kosketin', 'korotettu ♯ tai alennettu ♭ sävel'],
+      bands && ['<span class="hk-band">c¹–h¹</span>', 'Palkki koskettimien yllä', 'oktaavialan nimi'],
+      under && ['<span class="hk-mid">▲<small>c¹</small></span>', 'Nuoli', 'keski-c eli yksiviivainen c'],
+    ].filter(Boolean);
+    return `<figure class="pianofig">${svg}<details class="pk-help"><summary><span class="q" aria-hidden="true">?</span>Mitä värit tarkoittavat?</summary>
+      <div class="pk-help-body">${rows.map(([ic, t, d]) => `<div class="hrow"><span class="hic">${ic}</span><span><b>${t}</b><small>${d}</small></span></div>`).join('')}</div></details></figure>`;
   }
 
   /* Rytmi: tokenit välilyönnein: w h q e s (+ '.' pisteellinen), r-etuliite = tauko, [ ] = palkki,
